@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>PHPImageResize by whizzzkid</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>PHPImageResize</h1>
+        <p>php image (local or remote) resizing, compression and caching script</p>
+
+        <p class="view"><a href="https://github.com/whizzzkid/phpimageresize">View the Project on GitHub <small>whizzzkid/phpimageresize</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/whizzzkid/phpimageresize/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/whizzzkid/phpimageresize/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/whizzzkid/phpimageresize">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>PHPImageResize Script</h1>
+
+<p>This is a beautiful scrip that will allow you to simply resize, compress and cache your images on the fly. The script is dynamic and flexible and is being updated continuously.</p>
+
+<h1>Using The Script</h1>
+
+<p>You just need to include a simple function file in your project and you are good to go. So you basically start by including the file in your project.
+    &lt;?php
+        require_once 'function.resize.php';
+    ?&gt;</p>
+
+<h2>Basic Resizing</h2>
+
+<p>You need to define the basic settings for your image as an array for the scrip to process:</p>
+
+<h3>Resizing by width/height:</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Resizing By Width and Height</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Resizing and giving a custom canvas color</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300, 'canvas-color'=&gt;'#ff0000');
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Resizing by Cropping</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300, 'crop'=&gt; true);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Scaling the image</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300, 'scale'=&gt; true);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Resizing images from remote location</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300);
+?&gt;
+&lt;img src='&lt;?=resize('REMOTE_ADDR',$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Compressing Images to JPEG (lossy)</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300, 'compress'=&gt;true);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<h3>Setting Compression Level (1-99)Low to High</h3>
+
+<pre><code>&lt;?php
+    $settings = array('w'=&gt;300, 'h'=&gt;300, 'compress'=&gt;true, 'compression'=&gt;70);
+?&gt;
+&lt;img src='&lt;?=resize($IMG_PATH,$settings)?&gt;' border='0' /&gt;
+</code></pre>
+
+<p><a href="http://clients.nishantarora.in/projects/PHPImageResize/example.php?img=images/dog.png">Check Out The Example Here!</a></p>
+
+<p>Forked By
+<a href="http://nishantarora.in">Whizzzkid</a></p>
+
+<p>Original Source
+<a href="https://github.com/wes/phpimageresize">Wes</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/whizzzkid">whizzzkid</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
