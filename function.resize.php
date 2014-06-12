@@ -1,4 +1,4 @@
-<?php
+<?
 /**
  * function by Wes Edling .. http://joedesigns.com
  * feel free to use this in any project, i just ask for a credit in the source code.
@@ -9,6 +9,7 @@
  * 2012/07/12 - Whizzzkid - Added support for encoded image urls and images on ssl secured servers [https://]
  * 2012/07/12 - Whizzzkid - Code Cleaning...
  * 2012/07/28 - Whizzzkid - Added Compression Support upto 97% file size reduction achieved. Lots of code cleaned!
+ * 2014/06/12 - Tom Taylor - Limited fetch of image to 100ms, if slower or file does not exist locally due to write issue, return original URI to load image
  */
 /**
  * SECURITY:
@@ -25,23 +26,27 @@
  */
 function resize($imagePath,$opts=null){
 	$imagePath = urldecode($imagePath);
+	$origImagePath = $imagePath;
 	
 	// start configuration........
-	$cacheFolder = 'cache/';							//path to your cache folder, must be writeable by web server
+	$cacheFolder = 'tmphdsdh492673/cache/';							//path to your cache folder, must be writeable by web server
+	$cacheFolderRewrite = '/i/cache/';							//path to your cache folder, must be writeable by web server
 	$remoteFolder = $cacheFolder.'remote/';				//path to the folder you wish to download remote images into
 	
 	//setting script defaults
 	$defaults['crop']				= false;
-	$defaults['scale']				= false;
+	$defaults['scale']				= true;
 	$defaults['thumbnail']			= false;
 	$defaults['maxOnly']			= false;
 	$defaults['canvas-color']		= 'transparent';
 	$defaults['output-filename']	= false;
 	$defaults['cacheFolder']		= $cacheFolder;
+	$defaults['cacheFolderRewrite']	= $cacheFolderRewrite;
 	$defaults['remoteFolder']		= $remoteFolder;
-	$defaults['quality'] 			= 80;
-	$defaults['cache_http_minutes']	= 1;
-	$defaults['compress']			= false;			//will convert to lossy jpeg for conversion...
+	$defaults['quality'] 			= 60;
+	$defaults['cache_http_minutes']	= 120;
+	$defaults['http_timeout']		= 100;
+	$defaults['compress']			= true;			//will convert to lossy jpeg for conversion...
 	$defaults['compression']		= 40;				//[1-99]higher the value, better the compression, more the time, lower the quality (lossy)
 	
 	$opts = array_merge($defaults, $opts);
@@ -50,6 +55,7 @@ function resize($imagePath,$opts=null){
 	
 	//processing begins
 	$cacheFolder = $opts['cacheFolder'];
+	$cacheFolderRewrite = $opts['cacheFolderRewrite'];
 	$remoteFolder = $opts['remoteFolder'];
 	$purl = parse_url($imagePath);
 	$finfo = pathinfo($imagePath);
@@ -66,14 +72,26 @@ function resize($imagePath,$opts=null){
 			}
 		}
 		if($download_image){
-			file_put_contents($local_filepath,file_get_contents($imagePath));
+			$options = array(
+        		'http'=>array( 'timeout' => $opts['http_timeout'], 'ignore_errors' => true)
+            );
+			$fetchImg = file_get_contents($imagePath, false, stream_context_create($options));
+			if($fetchImg) {
+				file_put_contents($local_filepath,$fetchImg,FILE_USE_INCLUDE_PATH | LOCK_EX);
+				if (!file_exists($local_filepath)) {
+					return $imagePath;
+				}
+			} else {
+				return $imagePath;
+			}
 		}
 		$imagePath = $local_filepath;
 	}
 	if(!file_exists($imagePath)){
 		$imagePath = $_SERVER['DOCUMENT_ROOT'].$imagePath;
 		if(!file_exists($imagePath)){
-			return 'image not found';
+			error_log("image not found", 0);
+			return $origImagePath;
 		}
 	}
 	if(isset($opts['w'])){ $w = $opts['w']; };
@@ -176,6 +194,12 @@ function resize($imagePath,$opts=null){
 			}
 		}
 	}
-	// return cache file path
-	return str_replace($_SERVER['DOCUMENT_ROOT'],'',$newPath);	
+
+	if(file_exists($newPath)){
+        return str_replace($_SERVER['DOCUMENT_ROOT'],'',($cacheFolderRewrite != "" ? str_replace($cacheFolder, $cacheFolderRewrite, $newPath) : $newPath));	
+    } else {
+		error_log("new image not found", 0);
+		return $origImagePath;
+	}
 }
+?>
