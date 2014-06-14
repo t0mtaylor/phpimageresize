@@ -10,6 +10,7 @@
  * 2012/07/12 - Whizzzkid - Code Cleaning...
  * 2012/07/28 - Whizzzkid - Added Compression Support upto 97% file size reduction achieved. Lots of code cleaned!
  * 2014/06/12 - Tom Taylor - Limited fetch of image to 100ms, if slower or file does not exist locally due to write issue, return original URI to load image
+ * 2014/06/13 - Tom Taylor - More improvements, try and unlink unused files, check my scrubber: https://gist.github.com/t0mtaylor/9a450f3eb80c0d1c9b4d
  */
 /**
  * SECURITY:
@@ -29,7 +30,7 @@ function resize($imagePath,$opts=null){
 	$origImagePath = $imagePath;
 	
 	// start configuration........
-	$cacheFolder = 'tmphdsdh492673/cache/';							//path to your cache folder, must be writeable by web server
+	$cacheFolder = 'tmp/cache/';							//path to your cache folder, must be writeable by web server
 	$cacheFolderRewrite = '/i/cache/';							//path to your cache folder, must be writeable by web server
 	$remoteFolder = $cacheFolder.'remote/';				//path to the folder you wish to download remote images into
 	
@@ -129,7 +130,7 @@ function resize($imagePath,$opts=null){
             $create = true;
         }
     }
-	if($create){
+	if($create && file_exists($imagePath)){
 		if(!empty($w) && !empty($h)){
 			list($width,$height) = getimagesize($imagePath);
 			$resize = $w;
@@ -199,6 +200,9 @@ function resize($imagePath,$opts=null){
         return str_replace($_SERVER['DOCUMENT_ROOT'],'',($cacheFolderRewrite != "" ? str_replace($cacheFolder, $cacheFolderRewrite, $newPath) : $newPath));	
     } else {
 		error_log("new image not found", 0);
+		@unlink($imagePath);
+		@unlink($newPath);
+		@unlink($newestPath);
 		return $origImagePath;
 	}
 }
